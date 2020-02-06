@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom';
 
 const HashedBox = ({ hash, typeName, name, short = true, isCopy = true, noLink = false }) => {
   const getter = short?getShortHashOrBakerName:getHashOrBakerName;
+  noLink = noLink || !hash;
   return (
     <HashBlockWrapper>
-      <Blockies hash={hash} />
-      {!noLink?(<HashLink to={`/account/${hash}`}>{getter(hash)}</HashLink>):getter(hash)}
+      {hash&&<Blockies hash={hash} />}
+      {!noLink?(<HashLink to={`/${hash}`}>{getter(hash)}</HashLink>):getter(hash)}
       {isCopy && <CopyButton />}
       <DataBox title={typeName} />
     </HashBlockWrapper>
@@ -20,7 +21,7 @@ const HashBlockWrapper = styled.div`
   font-size: 14px;
 `;
 const HashLink = styled(Link)`
-  font-size: 16px;
+  font-size: 14px;
 `;
 
 export default HashedBox;

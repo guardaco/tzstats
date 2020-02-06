@@ -25,18 +25,21 @@ const CirculatingSupply = () => {
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
+  display: flex;
 `;
 export default CirculatingSupply;
 
 function getBarSettings(chain) {
+  const s = chain.supply;
+  let liquid = s.total - s.unvested - s.unclaimed - s.frozen;
   return [
     {
-      percent: (chain.supply.circulating / chain.supply.total) * 100,
+      percent: (liquid / chain.supply.total) * 100,
       color: '#3e85f2',
-      title: 'Circulating',
-      value: chain.supply.circulating,
+      title: 'Liquid',
+      value: liquid,
     },
     {
       percent: (chain.supply.unvested / chain.supply.total) * 100,

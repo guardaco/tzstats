@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spiner } from '../../../../components/Common';
+import { Spinner } from '../../../../components/Common';
 import useInfiniteScroll from '../../../../hooks/useInfiniteScroll';
 import { NoDataFound } from '../../../Common';
 import { TableBody, TableHeader, TableHeaderCell, TableRow, TableCell, Value } from '../../../Common';
@@ -121,7 +121,7 @@ const RightsTable = ({ account }) => {
                 <TableRow key={i}>
                   <TableCell width={5}><Value value={item.cycle} type="value-full"/></TableCell>
                   <TableCell width={10}>
-                    <Link to={`/block/${item.height}`}><Value value={item.height} type="value-full"/></Link>
+                    <Link to={`/${item.height}`}><Value value={item.height} type="value-full"/></Link>
                   </TableCell>
                   <TableCell width={10}>{item.type}</TableCell>
                   <TableCell width={10}>{item.status}</TableCell>
@@ -138,7 +138,7 @@ const RightsTable = ({ account }) => {
         </TableBody>
       ) : (
         <TableBody>
-          <Spiner />
+          <Spinner />
         </TableBody>
       )}
     </>

@@ -1,15 +1,24 @@
 import React from 'react';
-import { DataBox, FlexRow } from '../../Common';
+import { DataBox, FlexRowSpaceBetween } from '../../Common';
 import { Link } from 'react-router-dom';
+import { useGlobal } from 'reactn';
 
 const DoubleEndorsementEvidence = ({ op }) => {
-  return (
-    <FlexRow>
-      <Link to={`/block/${op.block}`}><DataBox mr={40} title="Block" valueSize="14px" value={op.height} /></Link>
-      <Link to={`/cycle/${op.cycle}`}><DataBox mr={40} title="Cycle" valueSize="14px" value={op.cycle} /></Link>
-      <DataBox mr={40} title="Date & Time" valueSize="14px" valueType="datetime" value={op.time} />
-    </FlexRow>
-  );
+  const [chain] = useGlobal('chain');
+	return (
+		<FlexRowSpaceBetween>
+			<Link to={`/${op.block}`}>
+				<DataBox title="Block" value={op.height} />
+			</Link>
+            <DataBox title="Confirmations" value={chain.height-op.height} />
+			<Link to={`/cycle/${op.cycle}`}>
+				<DataBox title="Cycle" value={op.cycle} />
+			</Link>
+			<DataBox title="Date & Time" valueType="datetime" value={op.time} />
+			<DataBox title="Burned" value={op.burned} valueType="currency-short" />
+			<DataBox title="Reward" value={op.reward} valueType="currency-short" />
+		</FlexRowSpaceBetween>
+	);
 };
 
 export default DoubleEndorsementEvidence;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spiner } from '../../../../components/Common';
+import { Spinner } from '../../../../components/Common';
 import { Blockies, NoDataFound, Value } from '../../../Common';
 import { TableBody, TableHeader, TableHeaderCell, TableRow, TableCell, TableDetails } from '../../../Common';
 import { getShortHashOrBakerName } from '../../../../utils';
@@ -14,15 +14,11 @@ const ContractsTable = ({ account }) => {
       let acc = await getTableDataByType({
         address: account.address,
         type: 'managed',
-        limit: account.n_origination
+        limit: 50000
       });
       setData({table: acc, isLoaded: true});
     };
-    if (account.n_origination) {
-      fetchData();
-    } else {
-      setData({isLoaded: true});
-    }
+    fetchData();
   }, [account.address, account.n_origination]);
 
   return (
@@ -37,7 +33,7 @@ const ContractsTable = ({ account }) => {
         <TableHeaderCell width={15}>Delegate</TableHeaderCell>
       </TableHeader>
       {data.isLoaded ? (
-        <TableBody id={'account-managed'}>
+        <TableBody id={'contracts'}>
           {data.table && data.table.length ? (
             data.table.map((item, i) => {
               return (
@@ -45,7 +41,7 @@ const ContractsTable = ({ account }) => {
                   <TableCell width={5}><TableDetails>{i+1}</TableDetails></TableCell>
                   <TableCell width={15}>
                     <Blockies hash={item.account} />
-                    <Link to={`/account/${item.address}`}>{getShortHashOrBakerName(item.address)}</Link>
+                    <Link to={`/${item.address}`}>{getShortHashOrBakerName(item.address)}</Link>
                   </TableCell>
                   <TableCell width={20}><Value value={item.first_seen_time} type="datetime"/></TableCell>
                   <TableCell width={20}><Value value={item.last_seen_time} type="datetime"/></TableCell>
@@ -54,7 +50,7 @@ const ContractsTable = ({ account }) => {
                   {item.delegate?(
                     <TableCell width={15}>
                       <Blockies hash={item.delegate} />
-                      <Link to={`/account/${item.delegate}`}>{getShortHashOrBakerName(item.delegate)}</Link>
+                      <Link to={`/${item.delegate}`}>{getShortHashOrBakerName(item.delegate)}</Link>
                     </TableCell>
                   ) : (
                     <TableCell width={15}>-</TableCell>
@@ -68,7 +64,7 @@ const ContractsTable = ({ account }) => {
         </TableBody>
       ) : (
         <TableBody>
-          <Spiner />
+          <Spinner />
         </TableBody>
       )}
     </>

@@ -1,12 +1,12 @@
 import React from 'react';
 import PriceChart from './PriceChart';
-import { Card, FlexColumn, DataBox, FlexRowWrap, FlexRow } from '../../Common';
+import { Card, FlexColumn, FlexColumnSpaceAround, DataBox, FlexRowWrap, Row } from '../../Common';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { isValid, getPeakVolumeTime, wrapToVolume } from '../../../utils';
 import { useGlobal } from 'reactn';
 import { getOhlcvData, getVolumeData, marketNames } from '../../../services/api/markets';
-import { Spiner } from '../../../components/Common';
+import { Spinner } from '../../../components/Common';
 import useOnline from '../../../hooks/useOnline';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
@@ -18,9 +18,15 @@ const PriceWithVolume = () => {
     period: '',
     volume: 0,
   });
-  const [market, setMarket] = useLocalStorage('market', { exchange: 'kraken', market: 'XTZ_USD' });
+  const defaultMarket = { exchange: 'kraken', market: 'XTZ_USD' };
+  const [market, setMarket] = useLocalStorage('market', defaultMarket);
   const [tickers] = useGlobal('tickers');
   const isOnline = useOnline();
+
+  // reset when current exchange/market is dead
+  if (!tickers.some((t)=> t.exchange === market.exchange && t.pair === market.market)) {
+    setMarket(defaultMarket);
+  }
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +93,7 @@ const PriceWithVolume = () => {
               setCurrentValue={setSelected}
             />
           </div>
-          <FlexColumn justifyContent="space-between" width={120} borderTop="1px solid #787c8b">
+          <ExtraColumn >
             <PriceLegend lastPrice={data.lastPrice} quote={getQuote(market.market)} />
             <DataBox
               valueSize="14px"
@@ -97,14 +103,23 @@ const PriceWithVolume = () => {
               value={data.avgvol}
             />
             <VolumeLegend peak={data.peak} currentValue={selected} />
-          </FlexColumn>
+          </ExtraColumn>
         </FlexRowWrap>
       </Card>
     </Wrapper>
   ) : (
-    <Spiner />
+    <Spinner />
   );
 };
+
+const ExtraColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 120px;
+  border-top: 1px solid #787c8b;
+`;
+
 
 const getQuote = m => m.split('_')[1];
 
@@ -115,8 +130,8 @@ const MarketSelector = ({ tickers, current, setMarket }) => {
   const pairs = markets[current.exchange].map(i => i.pair).sort();
   const exchanges = Object.keys(markets).sort();
   return (
-    <FlexRow>
-      <FlexRow>
+    <Row>
+      <Row>
         {pairs.map((p, i) => {
           return (
             <Button
@@ -129,9 +144,9 @@ const MarketSelector = ({ tickers, current, setMarket }) => {
             </Button>
           );
         })}
-      </FlexRow>
+      </Row>
       <Divider />
-      <FlexRow>
+      <Row>
         {exchanges.map((e, i) => {
           return (
             <Button
@@ -144,8 +159,8 @@ const MarketSelector = ({ tickers, current, setMarket }) => {
             </Button>
           );
         })}
-      </FlexRow>
-    </FlexRow>
+      </Row>
+    </Row>
   );
 };
 
@@ -153,28 +168,24 @@ const PriceLegend = ({ lastPrice, quote }) => {
   return (
     <FlexColumn height={170} borderBottom="1px solid #787c8b" justifyContent="space-evenly">
       <DataBox
-        valueSize="14px"
         valueType="currency-flex"
         valueOpts={{ dim: 0, digits: 4, sym: quote }}
         title="Last Price"
         value={lastPrice.close}
       />
       <DataBox
-        valueSize="14px"
         valueType="currency-flex"
         valueOpts={{ dim: 0, digits: 4, sym: quote }}
         title="Open Price Today"
         value={lastPrice.open}
       />
       <DataBox
-        valueSize="14px"
         valueType="currency-flex"
         valueOpts={{ dim: 0, digits: 4, sym: quote }}
         title="Highest Price Today"
         value={lastPrice.high}
       />
       <DataBox
-        valueSize="14px"
         valueType="currency-flex"
         valueOpts={{ dim: 0, digits: 4, sym: quote }}
         title="Lowest Price Today"
@@ -186,18 +197,17 @@ const PriceLegend = ({ lastPrice, quote }) => {
 
 const VolumeLegend = ({ peak, currentValue }) => {
   return (
-    <FlexColumn
+    <FlexColumnSpaceAround
       height={130}
       borderTop="1px solid #787c8b"
       borderBottom="1px solid #787c8b"
-      justifyContent="space-around"
     >
-      <DataBox valueSize="14px" value={peak} valueType="text" title="Peak Trading Hours" />
-    </FlexColumn>
+      <DataBox value={peak} valueType="text" title="Peak Trading Hours" />
+    </FlexColumnSpaceAround>
   );
 };
 const Wrapper = styled.div`
-  min-width: 340px;
+  min-width: 300px;
 `;
 
 const Button = styled.button`

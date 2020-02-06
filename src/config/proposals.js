@@ -1,4 +1,12 @@
 export const proposals = {
+  empty: {
+    id: -1,
+    name: '–',
+    by: '',
+    link: '',
+    docu: '',
+    archive: ''
+  },
   Pt24m4xiPbLDhVgVfABUjirbmda3yohdN82Sp9FeuAXJ4eV9otd: {
     id: 11,
     name: 'Athens A',
@@ -46,4 +54,62 @@ export const proposals = {
     docu: 'http://tezos.gitlab.io/master/protocols/005_babylon.html#bug-affecting-bigmaps-in-005-psbaby5h',
     archive: 'https://blog.nomadic-labs.com/files/babylon_005_PsBabyM1.tar',
   },
+  PtCarthavAMoXqbjBPVgDCRd5LgT7qqKWUPXnYii3xCaHRBMfHH: {
+    id: 15,
+    name: 'Carthage 1.0',
+    by: 'Nomadic Labs',
+    link: 'https://blog.nomadic-labs.com/carthage-changelog-and-testnet.html',
+    docu: 'http://tezos.gitlab.io/protocols/006_carthage.html',
+    archive: 'https://blog.nomadic-labs.com/files/carthage_006_PtCartha.tar',
+  },
+  PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb: {
+    id: 16,
+    name: 'Carthage 2.0',
+    by: 'Nomadic Labs',
+    link: 'https://medium.com/cryptium/on-the-carthage-proposal-and-the-carthagenet-test-network-de876930445e',
+    docu: 'https://tezos.gitlab.io/protocols/006_carthage.html',
+    archive: 'https://gitlab.com/nomadic-labs/tezos/tree/proto-006',
+  },
 };
+
+export function getProposalIdByName(value) {
+  if (!value) {
+    return null; // for search
+  }
+  const hashes = Object.keys(proposals).filter(key => {
+    return proposals[key].name.includes(value);
+  });
+  return hashes[0] ? proposals[hashes[0]].id : null;
+}
+
+export function getProposalById(value) {
+  if (!value) {
+      return proposals.empty;
+  }
+  const hashes = Object.keys(proposals).filter(k => proposals[k].id === value);
+  return hashes[0] ? proposals[hashes[0]] : {
+    id: value,
+    by: '',
+    name: hashes[0] ? hashes[0].slice(0, 7) + '...' : '-',
+    link: 'https://www.tezosagora.org/',
+    docu: '',
+    archive:''
+  };
+}
+
+export function getProposalByHash(value) {
+  if (!value) {
+      return proposals.empty;
+  }
+  const hashes = Object.keys(proposals).filter(key => {
+    return key.includes(value);
+  });
+  return hashes[0] ? proposals[hashes[0]] : {
+    id: 0,
+    by: '',
+    name: value.slice(0, 7) + '...',
+    link: 'https://www.tezosagora.org/',
+    docu: '',
+    archive:''
+  };
+}

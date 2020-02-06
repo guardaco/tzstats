@@ -5,11 +5,12 @@ import { TableBody, TableHeader, TableHeaderCell, TableRow, TableCell } from '..
 import { Link } from 'react-router-dom';
 import { getShortHash, getShortHashOrBakerName, getEndTime, formatValue } from '../../../utils';
 import { format } from 'd3-format';
-import { proposals } from '../../../config/proposals';
+import { getProposalByHash } from '../../../config/proposals';
+
 
 const ProposalPeriod = ({ election, period }) => {
   if (!period.proposals.length) {
-    return (<Wrapper><EmptyData title={'1 No proposal was submitted'} text={election.is_open&&`Approximately ${getEndTime(election, 'end_time')}`} mh={250} /></Wrapper>);
+    return (<Wrapper><EmptyData title={'1 No proposal was submitted'} text={election.is_open&&`Approximately ${getEndTime(period, 'period_end_time')}`} mh={250} /></Wrapper>);
   }
   const endTime = getEndTime(period);
 
@@ -27,18 +28,18 @@ const ProposalPeriod = ({ election, period }) => {
             return (
               <TableRow key={i}>
                 <TableCell width={20}>
-                  <OutLink target="_blank" rel="noopener noreferrer" href={proposals[item.hash].link}>
-                    {proposals[item.hash].name.split(" ").slice(-1)}
+                  <OutLink target="_blank" rel="noopener noreferrer" href={getProposalByHash(item.hash).link}>
+                    {getProposalByHash(item.hash).name.split(" ").slice(-1)}
                   </OutLink>
                 </TableCell>
                 <TableCell width={30}>
-                  <OutLink target="_blank" rel="noopener noreferrer" href={proposals[item.hash].archive}>
+                  <OutLink target="_blank" rel="noopener noreferrer" href={getProposalByHash(item.hash).archive}>
                     {getShortHash(item.hash)}
                   </OutLink>
                 </TableCell>
                 <TableCell width={35}>
                   <Blockies hash={item.source} />
-                  <Link to={`/account/${item.source}`}>{getShortHashOrBakerName(item.source)}</Link>
+                  <Link to={`/${item.source}`}>{getShortHashOrBakerName(item.source)}</Link>
                 </TableCell>
                 <TableCell width={15}>{format(',')(item.rolls)}</TableCell>
               </TableRow>
@@ -76,7 +77,7 @@ const OutLink = styled.a`
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
   font-size: 14px;
 `;

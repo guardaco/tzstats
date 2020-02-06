@@ -16,10 +16,11 @@ const supply = {
   active_staking: 0.0,
   inactive_delegated: 0.0,
   inactive_staking: 0.0,
-  mined: 0.0,
-  mined_baking: 0.0,
-  mined_endorsing: 0.0,
-  mined_seeding: 0.0,
+  minted: 0.0,
+  minted_baking: 0.0,
+  minted_endorsing: 0.0,
+  minted_seeding: 0.0,
+  minted_airdrop: 0.0,
   burned: 0.0,
   burned_double_baking: 0.0,
   burned_double_endorse: 0.0,
@@ -52,11 +53,11 @@ const chain = {
   timestamp: null,
   inflation_rate_1y: 0.0,
   supply: supply,
-  status: {status:'offline'}
+  status: { status: 'offline' },
 };
 const tickers = [];
 const cycle = { cycle: 0, start_height: 0 };
-const config = { blocks_per_cycle: 4096, time_between_blocks: [60], version: 0 };
+const config = { chain_id: 'NetXdQprcVkpaWU', blocks_per_cycle: 4096, time_between_blocks: [60], version: 0 };
 const lastMarketData = { date: new Date(), price: 0.0, change: 0.0 };
 const setDefaultGlobalState = () => {
   setGlobal({ chain, lastMarketData, cycle, config, tickers });

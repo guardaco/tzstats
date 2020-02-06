@@ -11,7 +11,7 @@ import Logo from './Logo';
 import { getChainData, getChainConfig } from '../../../services/api/tz-stats';
 import { useGlobal } from 'reactn';
 import useOnline from '../../../hooks/useOnline';
-import { isMainnet } from '../../../utils';
+import { enableMarket } from '../../../config';
 import Footer from '../Footer';
 
 const Sidebar = () => {
@@ -76,19 +76,28 @@ const Sidebar = () => {
       <Logo />
       <NetworkCircle />
       <LastBlock />
-      {isMainnet(chain) && <MarketInfo />}
+      {enableMarket && <MarketInfo />}
       <Election />
       <NetworkHealth />
       {chain && chain.status.status !== 'synced' && (
         <Callout intent="danger">Tezos indexer {chain.status.status}. The data presented may be stale.</Callout>
       )}
       {!isOnline && <Callout intent="danger">TzStats is offline. Please check your network connection.</Callout>}
+      <Stretch />
       <Footer />
     </Wrapper>
   );
 };
+
+const Stretch = styled.div`
+  flex-grow: 1;
+  -webkit-flex-grow: 1;
+  -webkit-flex: 2 0 0;
+`;
+
 const Wrapper = styled.div`
-  width: 220px;
+  min-width: 220px;
+  max-width: 220px;
   min-height: 100vh;
   display: flex;
   display: flex;

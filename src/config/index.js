@@ -1,5 +1,4 @@
 import { bakerAccounts } from './baker-accounts';
-import { proposals } from './proposals';
 export const fiatCurrencies = [
   { name: 'USD', symbol: '$' },
   { name: 'EUR', symbol: '€' },
@@ -11,6 +10,8 @@ export const TZSTATS_API_URL = 'https://xtzapi.guarda.co';
 export const GOOGLE_ANALYTICS_API_KEY =
   process.env.REACT_APP_GOOGLE_ANALYTICS_API_KEY || '<[GOOGLE_ANALYTICS_API_KEY]>';
 export const defaultFont = "-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif";
+function isMarketEnabled(val) { return !!(parseInt(val) || val === "true"); }
+export const enableMarket = process.env.REACT_APP_TZSTATS_ENABLE_MARKET || isMarketEnabled('<[TZSTATS_ENABLE_MARKET]>');
 export const opNames = {
   activate_account: 'Activation',
   double_baking_evidence: 'Double Baking',
@@ -23,6 +24,7 @@ export const opNames = {
   endorsement: 'Endorsement',
   proposals: 'Proposal',
   ballot: 'Ballot',
+  call: 'Contract Call'
 };
 export const govNames = {
   '1': 'Proposal',
@@ -34,4 +36,4 @@ export const govNames = {
   '4': 'Promotion Vote',
   promotion_vote: 'Promotion Vote',
 };
-export { bakerAccounts, proposals };
+export { bakerAccounts };

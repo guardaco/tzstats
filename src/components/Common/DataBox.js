@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FlexRow } from './index';
+import { RowSpace } from './index';
 import { Tz } from './Tz';
 import { formatCurrency, formatValue, formatDayTime, formatDay, formatTime, isUndefined } from '../../utils';
 
@@ -11,7 +11,7 @@ const DataBox = ({
   valueType,
   valueOpts,
   type = '',
-  valueSize = '18px',
+  valueSize = '14px',
   titleSize = '10px',
   ta = 'left',
   ml = '0',
@@ -45,17 +45,23 @@ const DataBox = ({
     case 'horizontal-value-as-title':
       return (
         <Wrapper ta={ta} ml={ml} mr={mr} fontSize={valueSize}>
-          <FlexRow justifyContent="space-between" alignItems="center">
+          <RowSpace>
             {<div style={{ paddingRight: '10px' }}>{title}</div>}
             {value !== undefined && (
               <Title fontSize={titleSize}>
                 <Value type={valueType} value={value} {...valueOpts} fontSize={valueSize} />
               </Title>
             )}
-          </FlexRow>
+          </RowSpace>
         </Wrapper>
       );
-
+    case 'inline':
+      return (
+        <Wrapper ta={ta} ml={ml} mr={mr} fontSize={valueSize}>
+          {title && <InlineTitle fontSize={titleSize}>{title}</InlineTitle>}
+          {value !== undefined && <Value type={valueType} value={value} {...valueOpts} fontSize={valueSize} />}
+        </Wrapper>
+      );
     default:
       return (
         <Wrapper ta={ta} ml={ml} mr={mr} fontSize={valueSize}>
@@ -69,7 +75,7 @@ const DataBox = ({
 let re = /^(.*)\.([^ ]*)( .*)?$/;
 
 export const Value = ({
-  type,
+  type = 'value-full',
   value,
   prec,
   sym,
@@ -79,7 +85,7 @@ export const Value = ({
   round = false,
   dim = true,
   zero = null,
-  fontSize = 12
+  fontSize = 12,
 }) => {
   if (value === 0 && zero) {
     return zero;
@@ -92,6 +98,8 @@ export const Value = ({
   }
   let res = '';
   switch (type) {
+    case 'plain':
+      return value;
     case 'text':
       return [prefix, value, suffix].join('');
     case 'datetime':
@@ -104,7 +112,7 @@ export const Value = ({
       res = formatTime(value);
       break;
     case 'currency':
-      sym = isUndefined(sym)?'ꜩ':sym;
+      sym = isUndefined(sym) ? 'ꜩ' : sym;
       if (!!digits) {
         res = formatCurrency(value, '.' + digits + 's');
       } else {
@@ -112,15 +120,15 @@ export const Value = ({
       }
       break;
     case 'currency-short':
-      sym = isUndefined(sym)?'ꜩ':sym;
+      sym = isUndefined(sym) ? 'ꜩ' : sym;
       res = formatCurrency(value, '~s');
       break;
     case 'currency-flex':
-      sym = isUndefined(sym)?'ꜩ':sym;
+      sym = isUndefined(sym) ? 'ꜩ' : sym;
       res = formatCurrency(value, ',.' + digits + 'r');
       break;
     case 'currency-full':
-      sym = isUndefined(sym)?'ꜩ':sym;
+      sym = isUndefined(sym) ? 'ꜩ' : sym;
       res = formatCurrency(value.toFixed(6), ',');
       break;
     case 'currency-usd':
@@ -132,13 +140,6 @@ export const Value = ({
       break;
     case 'value-short':
       res = formatValue(Math.round(value), '.' + digits + 's');
-      break;
-    case 'value-full':
-      if (!value && zero) {
-        res = zero;
-      } else {
-        res = formatValue(value, ',');
-      }
       break;
     case 'percent':
       switch (true) {
@@ -156,20 +157,26 @@ export const Value = ({
       if (!value && zero) {
         res = zero;
       } else {
-        res = formatValue(Math.round(value), ',');
+        res = formatValue(value, ',');
       }
   }
   let arr = re.exec(res);
   return arr && arr.length ? (
-    <Wrapper>
+    <ValueWrapper>
       {`${prefix}${arr[1]}`}
-      {dim?(<Dim>.{arr[2]}</Dim>):'.'+arr[2]}
-      {arr[3]}{arr[3]?'':' '}{sym==='ꜩ'?<Tz fontSize={fontSize}/>:sym}{suffix}
-    </Wrapper>
+      {dim ? <Dim>.{arr[2]}</Dim> : '.' + arr[2]}
+      {arr[3]}
+      {arr[3] ? '' : ' '}
+      {sym === 'ꜩ' ? <Tz fontSize={fontSize} /> : sym}
+      {suffix}
+    </ValueWrapper>
   ) : (
-    <Wrapper>
-      {res}{res.match(/.*[MkGmµ]$/)?'':' '}{sym==='ꜩ'?<Tz fontSize={fontSize}/>:sym}{suffix}
-    </Wrapper>
+    <ValueWrapper>
+      {res}
+      {res.match(/.*[MkGmµ]$/) ? '' : ' '}
+      {sym === 'ꜩ' ? <Tz fontSize={fontSize} /> : sym}
+      {suffix}
+    </ValueWrapper>
   );
 };
 
@@ -182,13 +189,30 @@ const Dim = styled.small`
 const Wrapper = styled.div`
   font-size: ${props => props.fontSize};
   text-align: ${props => props.ta};
-  margin-left: ${props => (props.ml||0) + 'px'};
-  margin-right: ${props => (props.mr||0) + 'px'};
+  margin-left: ${props => (props.ml || 0) + 'px'};
+  margin-right: ${props => (props.mr || 0) + 'px'};
   white-space: nowrap;
 `;
+
+const ValueWrapper = styled.span`
+  font-size: ${props => props.fontSize};
+  text-align: ${props => props.ta};
+  margin-left: ${props => (props.ml || 0) + 'px'};
+  margin-right: ${props => (props.mr || 0) + 'px'};
+  white-space: nowrap;
+`;
+
 const Title = styled.div`
   color: rgba(255, 255, 255, 0.52);
   font-size: ${props => props.fontSize};
 `;
+
+const InlineTitle = styled.span`
+  color: rgba(255, 255, 255, 0.52);
+  font-size: ${props => props.fontSize};
+  margin-right: 15px;
+`;
+
+
 
 export default DataBox;

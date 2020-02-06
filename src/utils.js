@@ -75,10 +75,11 @@ export function isValid(...args) {
 
 export function formatValue(value, prefix = ',') {
   value = value || 0;
-  return format(prefix)(value).replace(/(.*)([MkGmµ])$/, '$1 $2');
+  return format(prefix)(value).replace(/(.*)([MkGmµ])$/, '$1 $2').replace('G', 'B');
 }
 
-export function formatCurrency(value, prefix = ',', symbol = '') { // ꜩ
+export function formatCurrency(value, prefix = ',', symbol = '') {
+  // ꜩ
   // symbol = symbol?' ' + symbol:'';
   if (value === 0) {
     return 0 + symbol;
@@ -89,32 +90,33 @@ export function formatCurrency(value, prefix = ',', symbol = '') { // ꜩ
 }
 
 export function formatCurrencyShort(value, symbol = 'tz') {
-  return formatCurrency(value, '.2s', symbol);
+  return formatCurrency(value, ',.3s', symbol);
+  // return format(',.2s')(value) + ' ' + symbol;
 }
 
 export const addCommas = format(',');
 
 export function wrapToBalance(flowData, account) {
   let spendableBalance = account.spendable_balance;
-  let today = new Date().setHours(0, 0, 0, 0);
   const day = 1000 * 60 * 60 * 24;
+  let today = new Date().setUTCHours(0, 0, 0, 0) + day;
   const length = today - day * 30;
   let timeArray30d = [];
-  for (let index = today; index > length; index = index - day) {
+  for (let index = today; index >= length; index = index - day) {
     timeArray30d.push(index);
   }
   let res = [];
 
   timeArray30d.forEach((timeStamp, i) => {
     let item = _.findLast(flowData, item => {
-      return new Date(item[0]).setHours(0, 0, 0, 0) === timeStamp;
+      return new Date(item[0]).setUTCHours(0, 0, 0, 0) === timeStamp;
     });
 
     if (item) {
       let inFlow = item[1];
       let outFlow = item[2];
-      let sum = parseFloat((inFlow - outFlow).toFixed(4));
-      spendableBalance = parseFloat((spendableBalance - sum).toFixed());
+      let sum = parseFloat((inFlow - outFlow).toFixed(6));
+      spendableBalance = parseFloat((spendableBalance - sum).toFixed(6));
     }
     res.push({ time: timeStamp, value: spendableBalance });
   });
@@ -194,10 +196,17 @@ export function getShortHashOrBakerName(hash) {
     return 'none';
   }
   if (!hash) {
-    return 'God';
+    return '-';
   }
   const baker = bakerAccounts[hash];
   return baker ? baker.name : getShortHash(hash);
+}
+
+export function buildTitle(config, page, name) {
+  let title = [isMainnet(config) ? 'Tezos ' : 'TESTNET Tezos ' + config.network];
+  page && title.push(page);
+  name && title.push(name);
+  return title.join(' ');
 }
 
 export function getHashOrBakerName(hash) {
@@ -205,10 +214,15 @@ export function getHashOrBakerName(hash) {
     return 'none';
   }
   if (!hash) {
-    return 'God';
+    return '-';
   }
   const baker = bakerAccounts[hash];
   return baker ? baker.name : hash;
+}
+
+export function getBakerName(hash) {
+  const baker = bakerAccounts[hash];
+  return baker ? baker.name : null;
 }
 
 export function capitalizeFirstLetter(str) {
@@ -221,28 +235,6 @@ export function getMinutesInterval(start, n, slot = 60) {
     timeArray.push(start + slot * 1000 * i);
   }
   return timeArray;
-}
-
-export function wrappBlockDataToObj(array, range) {
-  return array.reduce((obj, item, index) => {
-    let timeIdx = range.findIndex(i => i > new Date(item[0]));
-    let time = timeIdx > 0 ? range[timeIdx - 1] : new Date(item[0]).setSeconds(0, 0);
-    obj[time] = [
-      ...(obj[time] || []),
-      {
-        time: new Date(item[0]),
-        hash: item[1],
-        height: item[2],
-        priority: item[3],
-        opacity:
-          item[3] === 0 ? 1 : item[3] === 1 ? 0.8 : item[3] < 4 ? 0.7 : item[3] < 8 ? 0.6 : item[3] < 16 ? 0.5 : 0.4,
-        is_orphan: item[4] || 0,
-        row_id: item[5],
-        parent_id: item[6],
-      },
-    ];
-    return obj;
-  }, {});
 }
 
 export function getPeakVolumeTime(data, hours = 1) {
@@ -279,17 +271,26 @@ export function getBlockTags(block, config) {
 
 export function getOpTags(op) {
   let tags = [];
-  if (op.is_internal) {
-    tags.push('Internal');
-  }
-  if (op.is_contract) {
-    tags.push('Contract Call');
-  }
+  // if (op.is_internal) {
+  //   tags.push('Internal');
+  // }
+  // if (op.is_contract) {
+  //   tags.push('Contract Call');
+  // }
   if (op.params) {
     tags.push('Params');
   }
   if (!op.is_success) {
     tags.push('Failed');
+    switch (op.status) {
+      case 'backtracked':
+        tags.push('Backtracked');
+        break;
+      case 'skipped':
+        tags.push('Skipped');
+        break;
+      default:
+    }
   }
   return tags;
 }
@@ -306,12 +307,13 @@ export function getAccountTags(account) {
     tags.push('Vesting');
   }
   if (account.address_type === 'blinded') {
-    tags.push('Fundraiser', 'Not Activated');
+    if (!account.is_activated) {
+      tags.push('Fundraiser', 'Not Activated');
+    } else {
+      tags.push('Activated');
+    }
   }
-  // if (account.is_delegated) {
-  //   tags.push('Delegating');
-  // }
-  if (!account.is_active_delegate && account.is_delegate) {
+  if (!account.is_active_delegate && account.is_delegate && !account.is_delegated) {
     tags.push('Inactive');
   }
   return tags;
@@ -324,12 +326,13 @@ export function getAccountType(account) {
   if (!account.is_contract && !account.is_delegate && account.is_delegated) {
     return { name: 'Delegator Account', type: 'delegator' };
   }
-  if (!account.is_contract && account.is_delegate && !account.is_delegated) {
+  if (!account.is_contract && account.is_delegate) {
     return { name: 'Baker Account', type: 'baker' };
   }
   if (account.is_contract) {
     return { name: 'Smart Contract', type: 'contract' };
   }
+  return { name: 'Basic Account', type: 'basic' };
 }
 
 export function getNetworkHealthStatus(value) {
@@ -354,18 +357,6 @@ export function getEndTime(period, field, noDetail) {
     ? `ends on ${formatDay(period[field], 1, 1)}` +
         (noDetail ? '' : ` (+${convertMinutes(new Date(period[field]).getTime() / 60000 - Date.now() / 60000)})`)
     : `has ended on ${formatDay(period[field], 1, 1)}`;
-}
-export function getProposalIdByName(value) {
-  const hashes = Object.keys(proposals).filter(key => {
-    return proposals[key].name.includes(value);
-  });
-  return hashes[0] ? proposals[hashes[0]].id : null;
-}
-export function getProposalByHash(value) {
-  const hashes = Object.keys(proposals).filter(key => {
-    return key.includes(value);
-  });
-  return hashes[0] ? proposals[hashes[0]] : null;
 }
 
 export function getBakerHashByName(value) {
@@ -459,9 +450,9 @@ const hashTypeMap = {
   tz3: { type: 'account', b58len: 36, shortMatch: true },
   KT1: { type: 'account', b58len: 36, shortMatch: true },
   btz1: { type: 'account', b58len: 37, shortMatch: true },
-  B: { type: 'block', b58len: 51 },
-  o: { type: 'operation', b58len: 51 },
-  P: { type: 'protocol', b58len: 51 },
+  B: { type: 'block', b58len: 51, shortMatch: true },
+  o: { type: 'operation', b58len: 51, shortMatch: true },
+  P: { type: 'protocol', b58len: 51, shortMatch: true },
 };
 
 export function getHashType(hash, strictMatch) {

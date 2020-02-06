@@ -1,17 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useGlobal } from 'reactn';
 import CycleHistory from '../components/Cycle/CycleHistory';
 import CycleSnapshotInfo from '../components/Cycle/CycleSnapshotInfo';
 import CycleHealth from '../components/Cycle/CycleHealth';
 import DelegationTreeMap from '../components/Cycle/DelegationTreeMap';
 import { getChainData, getCycleById, getDelegationHistory } from '../services/api/tz-stats';
-import { Spiner } from '../components/Common';
+import { buildTitle } from '../utils';
+import { Spinner } from '../components/Common';
 import { withRouter } from 'react-router-dom';
 
 const CyclePage = ({ match, history }) => {
   const [data, setData] = React.useState({ isLoaded: false, match });
-
+  const [config] = useGlobal('config');
   const currentCycleId = match.params.id;
+
+  React.useEffect(() => {
+    document.title = buildTitle(config, 'Cycle', currentCycleId);
+  }, [config, currentCycleId]);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +41,7 @@ const CyclePage = ({ match, history }) => {
 
   return data.isLoaded ? (
     <Wrapper>
-      <CycleHistory cycle={data.cycle} lastCycle={data.lastCycle} />
+      <CycleHistory cycle={data.cycle} lastCycle={data.lastCycle} count={config.preserved_cycles} />
       <TwoElementsWrapper>
         <CycleSnapshotInfo cycle={data.cycle} />
         <CycleHealth cycle={data.cycle} />
@@ -43,7 +49,7 @@ const CyclePage = ({ match, history }) => {
       <DelegationTreeMap data={data.delegationHistory} cycle={data.cycle} />
     </Wrapper>
   ) : (
-    <Spiner />
+    <Spinner />
   );
 };
 

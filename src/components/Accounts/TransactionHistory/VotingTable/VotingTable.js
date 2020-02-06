@@ -2,10 +2,12 @@ import React from 'react';
 import useInfiniteScroll from '../../../../hooks/useInfiniteScroll';
 import { NoDataFound } from '../../../Common';
 import { TableBody, TableHeader, TableHeaderCell, TableRow, TableCell, TableDetails } from '../../../Common';
-import { getProposalByHash, capitalizeFirstLetter, formatValue, formatDayTime, getShortHash } from '../../../../utils';
+import { capitalizeFirstLetter, formatValue, formatDayTime, getShortHash } from '../../../../utils';
 import { getTableDataByType } from '../../../../services/api/tz-stats';
-import { Spiner } from '../../../../components/Common';
+import { Spinner } from '../../../../components/Common';
 import { Link } from 'react-router-dom';
+import { getProposalByHash } from '../../../../config/proposals';
+
 
 const VotingTable = ({ account }) => {
   const [data, setData] = React.useState({table:[], isLoaded: false, cursor: 0, eof: false });
@@ -77,8 +79,8 @@ const VotingTable = ({ account }) => {
                   <TableCell width={10}>{item.ballot.toUpperCase() || '-'}</TableCell>
                   <TableCell width={10}>{formatValue(item.rolls)}</TableCell>
                   <TableCell width={20}>{formatDayTime(item.time,1,1)}</TableCell>
-                  <TableCell width={10}><Link to={`/block/${item.height}`}>{formatValue(item.height)}</Link></TableCell>
-                  <TableCell width={10}><Link to={`/operation/${item.op}`}>{getShortHash(item.op)}</Link></TableCell>
+                  <TableCell width={10}><Link to={`/${item.height}`}>{formatValue(item.height)}</Link></TableCell>
+                  <TableCell width={10}><Link to={`/${item.op}`}>{getShortHash(item.op)}</Link></TableCell>
                   <TableCell width={10}></TableCell>
                 </TableRow>
               );
@@ -89,7 +91,7 @@ const VotingTable = ({ account }) => {
         </TableBody>
       ) : (
         <TableBody>
-          <Spiner />
+          <Spinner />
         </TableBody>
       )}
     </>

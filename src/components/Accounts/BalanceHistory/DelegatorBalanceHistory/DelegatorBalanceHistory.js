@@ -4,15 +4,15 @@ import { DataBox, FlexColumnSpaceAround, FlexRow, Card, FlexRowWrap, FlexRowSpac
 import { useGlobal } from 'reactn';
 import styled from 'styled-components';
 
-const DelegatorBalanceHistory = ({ account, balanceHistory }) => {
+const DelegatorBalanceHistory = ({ account, balance }) => {
   const [lastMarketData] = useGlobal('lastMarketData');
 
   return (
     <Wrapper>
-    <Card title={'Balance History (30d)'}>
+    <Card title={'Balance Last 30d'}>
       <FlexRowWrap>
         <FlexRow flex={1} mb={10}>
-          <BalanceChart type={'svg'} data={balanceHistory} />
+          <BalanceChart type={'svg'} data={balance} />
         </FlexRow>
         <FlexRowSpaceBetween width={250} ml={30}>
           <FlexColumnSpaceAround minHeight={150}>
@@ -44,6 +44,6 @@ export default DelegatorBalanceHistory;
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
 `;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { getBlockOperations } from '../../../services/api/tz-stats';
 import { opNames } from '../../../config';
-import { Spiner, Card, Blockies, Value } from '../../Common';
+import { Spinner, Card, Blockies, Value } from '../../Common';
 import { TableBody, TableHeader, TableHeaderCell, TableRow, TableCell, TableDetails } from '../../Common';
 import TxTypeIcon from '../../Common/TxTypeIcon';
 import { getShortHash, getShortHashOrBakerName } from '../../../utils';
@@ -53,6 +53,7 @@ const BlockOperations = ({ block, txType }) => {
   return (
     <Wrapper>
       <Card title={'Block Operations' + (data.type?' ('+opNames[data.type]+'s)':'')}>
+        <Table>
         <TableHeader>
           <TableHeaderCell width={5}>No</TableHeaderCell>
           <TableHeaderCell width={20}>Sender</TableHeaderCell>
@@ -71,17 +72,17 @@ const BlockOperations = ({ block, txType }) => {
                     <TableCell width={5}><TableDetails>{i+1}</TableDetails></TableCell>
                     <TableCell width={20}>
                       <Blockies hash={item.sender} />
-                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/account/${item.sender}`}>{getShortHashOrBakerName(item.sender)}</Link>
+                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.sender}`}>{getShortHashOrBakerName(item.sender)}</Link>
                     </TableCell>
                     <TableCell width={15}>
                       <TxTypeIcon isSuccess={item.is_success} type={item.is_contract ? 'contract' : item.type} />
-                      <TableDetails>{opNames[item.type]}</TableDetails>
+                      <TableDetails>{opNames[item.is_contract?'call':item.type]}</TableDetails>
                     </TableCell>
                     <TableCell width={20}>
                       {item.receiver ? (
                         <>
                           <Blockies hash={item.receiver} />
-                          <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/account/${item.receiver}`}>{getShortHashOrBakerName(item.receiver)}</Link>
+                          <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.receiver}`}>{getShortHashOrBakerName(item.receiver)}</Link>
                         </>
                       ) : (
                         '-'
@@ -90,7 +91,7 @@ const BlockOperations = ({ block, txType }) => {
                     <TableCell width={15}><Value value={item.volume||item.reward} type="currency" digits={0} zero="-"/></TableCell>
                     <TableCell width={10}><Value value={item.fee} type="currency" digits={0} zero="-"/></TableCell>
                     <TableCell width={10}>
-                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/operation/${item.hash}`}>{getShortHash(item.hash)}</Link>
+                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.hash}`}>{getShortHash(item.hash)}</Link>
                     </TableCell>
                   </TableRow>
                 );
@@ -101,9 +102,10 @@ const BlockOperations = ({ block, txType }) => {
           </TableBody>
         ) : (
           <TableBody>
-            <Spiner />
+            <Spinner />
           </TableBody>
         )}
+        </Table>
       </Card>
     </Wrapper>
   );
@@ -114,7 +116,12 @@ const NoOperations = styled.div`
   color: #858999;
 `;
 const Wrapper = styled.div`
-  min-width: 340px;
+  min-width: 300px;
   flex: 1.8;
+`;
+
+const Table = styled.div`
+  max-width: 100%;
+  overflow-x: auto;
 `;
 export default BlockOperations;

@@ -1,19 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 import BasicBalanceHistory from './BasicBalanceHistory';
-import DelegatorBalanceHistory from './DelegatorBalanceHistory';
 import BakerBalanceHistory from './BakerBalanceHistory';
 import DelegationHistory from './DelegationHistory';
 import { EmptyData } from '../../Common';
 import { getAccountType } from '../../../utils';
 
-const BalanceHistory = ({ account, balanceHistory, stakingData }) => {
+const BalanceHistory = ({ account, balance, staking }) => {
   const accountType = getAccountType(account);
   switch (accountType.type) {
     case 'basic':
       return (
         <JoinContainer>
-          <BasicBalanceHistory account={account} balanceHistory={balanceHistory} />
+          <BasicBalanceHistory account={account} balance={balance} />
           <Wrapper>
             <EmptyData
               title={'How to delegate?'}
@@ -28,7 +27,7 @@ const BalanceHistory = ({ account, balanceHistory, stakingData }) => {
     case 'delegator':
       return (
         <JoinContainer>
-          <BasicBalanceHistory account={account} balanceHistory={balanceHistory} />
+          <BasicBalanceHistory account={account} balance={balance} />
           <Wrapper>
             <EmptyData title={'Payout History'} height={212} text={'Work in progress...'} />
           </Wrapper>
@@ -37,13 +36,16 @@ const BalanceHistory = ({ account, balanceHistory, stakingData }) => {
     case 'baker':
       return (
         <JoinContainer>
-          <BakerBalanceHistory account={account} balanceHistory={balanceHistory} stakingData={stakingData} />
-          <DelegationHistory account={account} stakingData={stakingData} />
+          <BakerBalanceHistory account={account} balance={balance} staking={staking} />
+          <DelegationHistory account={account} staking={staking} />
         </JoinContainer>
       );
     case 'contract':
-      return <DelegatorBalanceHistory account={account} balanceHistory={balanceHistory} />;
-
+      return (
+        <JoinContainer>
+          <BasicBalanceHistory account={account} balance={balance} />
+        </JoinContainer>
+      );
     default:
       break;
   }
@@ -59,6 +61,6 @@ const JoinContainer = styled.div`
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
 `;

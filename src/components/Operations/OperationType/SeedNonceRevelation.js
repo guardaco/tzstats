@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, DataBox, FlexColumnSpaceBetween, FlexRow, Spiner } from '../../Common';
+import { Card, DataBox, FlexColumnSpaceBetween, FlexRow, Spinner } from '../../Common';
 import styled from 'styled-components';
 import TxTypeIcon from '../../Common/TxTypeIcon';
 import OperationAccount from '../OperationAccount';
@@ -38,7 +38,7 @@ const SeedNonceRevelation = ({ op }) => {
 			<TxTypeIcon fontSize={50} mr={40} type={op.type} isSuccess={op.is_success} />
 			<FlexColumnSpaceBetween flex={1}>
 				<FlexRow>
-					<Link to={`/block/${data.height}`}><DataBox title="For Block" valueSize="14px" value={data.height} /></Link>
+					<Link to={`/${data.height}`}><DataBox title="For Block" valueSize="14px" value={data.height} /></Link>
 				</FlexRow>
 				<FlexRow>
 					<DataBox title="Nonce" valueSize="12px" valueType="text" value={`0x${data.nonce}`} />
@@ -49,7 +49,7 @@ const SeedNonceRevelation = ({ op }) => {
 	  </Wrapper>
 	</FlexRow>
   ) : (
-	<Spiner />
+	<Spinner />
   ));
 };
 

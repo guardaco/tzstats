@@ -2,10 +2,7 @@ import React from 'react';
 import { utcFormat } from 'd3-time-format';
 import { scaleTime } from 'd3-scale';
 import { curveLinear } from 'd3-shape';
-import {
-  CrossHairCursor,
-  MouseCoordinateX,
-} from 'react-stockcharts/lib/coordinates';
+import {  MouseCoordinateX } from 'react-stockcharts/lib/coordinates';
 import { ChartCanvas, Chart } from 'react-stockcharts';
 import { AreaSeries } from 'react-stockcharts/lib/series';
 import { YAxis } from 'react-stockcharts/lib/axes';
@@ -51,13 +48,13 @@ class AreaChart extends React.Component {
           <YAxis
             axisAt="right"
             orient="right"
-            ticks={3}
-            tickFormat={x => format('~s')(x) + 'ꜩ'}
+            ticks={0}
+            tickFormat={x => format('~s')(x) + 'tz'} //ꜩ
             innerTickSize={-width + 160}
             tickStrokeDasharray={'Solid'}
             tickStrokeOpacity={0.3}
             tickStrokeWidth={1}
-            tickStroke={'rgba(255, 255, 255, 0.52)'}
+            tickStroke={'rgba(255, 255, 255, 0.82)'}
             fontWeight={300}
             fontSize={11}
             strokeWidth={0}
@@ -70,7 +67,7 @@ class AreaChart extends React.Component {
             orient="bottom"
             dx={180}
             fill="rgba(0,0,0,0)"
-            textFill="rgba(255, 255, 255, 0.52)"
+            textFill="rgba(255, 255, 255, 0.82)"
             displayFormat={utcFormat('%a, %b %d')}
             fontSize={11}
             fontFamily={defaultFont}
@@ -83,7 +80,6 @@ class AreaChart extends React.Component {
             strokeWidth={2}
             interpolation={curveLinear}
           />
-          <CrossHairCursor ratio={2} stroke="#FFFFFF" />
           <CurrentCoordinate displayFormat={formatCurrencyShort} r={3} yAccessor={d => d.value} fill={'#FFF'} />
         </Chart>
       </ChartCanvas>

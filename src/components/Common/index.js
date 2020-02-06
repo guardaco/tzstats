@@ -5,6 +5,9 @@ import {
   InlineBox,
   TextBox,
   DividerBox,
+  Row,
+  Column,
+  RowSpace,
   Flex,
   FlexItem,
   FlexRow,
@@ -22,6 +25,8 @@ import {
   TableCell,
   TableDetails,
   TwoCardInline,
+  Tabs,
+  Tab,
 } from './Box';
 import { LinkIcon } from './Controls';
 import { Value } from './DataBox';
@@ -32,7 +37,7 @@ export { default as IntervalSelect } from './IntervalSelect';
 export { default as Card } from './Card';
 export { default as ClickableCard } from './ClickableCard';
 export { default as DataBox } from './DataBox';
-export { default as Spiner } from './CenteredSpinner';
+export { default as Spinner } from './CenteredSpinner';
 export { default as Blockies } from './Blockies';
 export { default as CopyHashButton } from './CopyHashButton';
 export { default as HashedBox } from './HashedBox';
@@ -42,11 +47,16 @@ export { default as CurrentCoordinate } from './CurrentCoordinate';
 export { default as Tag } from './Tag';
 export { default as CopyButton } from './CopyButton';
 export { default as NoDataFound } from './NoDataFound';
+export { default as NotFound } from './NotFound';
+export { default as Error } from './Error';
 export {
   Box,
   InlineBox,
   TextBox,
   DividerBox,
+  Row,
+  Column,
+  RowSpace,
   Flex,
   FlexItem,
   FlexRow,
@@ -68,6 +78,8 @@ export {
   TwoCardInline,
   Devices,
   Sizes,
+  Tabs,
+  Tab,
 };
 
 //Todo replace it

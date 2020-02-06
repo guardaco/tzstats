@@ -10,7 +10,7 @@ const CycleSnapshotInfo = ({ cycle }) => {
         {cycle.snapshot_cycle ? (cycle.snapshot_cycle.is_snapshot ? (
           <FlexRowSpaceBetween>
             <FlexColumnSpaceBetween minHeight={100}>
-              <Link to={`/block/${cycle.snapshot_cycle.snapshot_height}`}>
+              <Link to={`/${cycle.snapshot_cycle.snapshot_height}`}>
                 <DataBox title="Block" value={cycle.snapshot_cycle.snapshot_height} />
               </Link>
               <DataBox title="Staking Ratio" valueType="percent" value={cycle.snapshot_cycle.staking_percent/100} />
@@ -36,7 +36,7 @@ const CycleSnapshotInfo = ({ cycle }) => {
   );
 };
 const Wrapper = styled.div`
-  min-width: 340px;
+  min-width: 300px;
   flex:1
   margin: 0 5px;
 `;

@@ -2,17 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import { Card, DataBox, FlexRowSpaceBetween, FlexColumnSpaceAround } from '../../Common';
 import { HorizontalProgressBar } from '../../Common/ProgressBar';
-import { getEndTime, getProposalByHash } from '../../../utils';
+import { getEndTime } from '../../../utils';
 import { govNames } from '../../../config';
+import { getProposalByHash } from '../../../config/proposals';
 import _ from 'lodash';
 
 const ElectionProgress = ({ election }) => {
   const period = election[election.voting_period];
   const endTime = getEndTime(period,0,1);
-  const title = `${govNames[election.num_periods]} Period  ${endTime}`;
+  const title = `${govNames[election.num_periods]} Period ${endTime}`;
   return (
     <Wrapper>
-      <Card title={title} mh={115}>
+      <Card title={title} mh={112}>
         <FlexColumnSpaceAround flex={1}>
           <GovSwitcher period={period} election={election}/>
         </FlexColumnSpaceAround>
@@ -38,7 +39,7 @@ const GovSwitcher = ({ period, election }) => {
 
 const Proposal = ({ period }) => {
   const prop = _.maxBy(period.proposals, d => d.rolls);
-  const lead = prop?getProposalByHash(prop.hash):{};
+  const lead = getProposalByHash(prop?prop.hash:null);
   const empty = !period.proposals.length;
   return !empty ? (
     <FlexRowSpaceBetween>
@@ -85,11 +86,13 @@ const Vote = ({ period }) => {
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
+  display: flex;
 `;
 
 const Empty = styled(FlexRowSpaceBetween)`
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.52);
 `;
 

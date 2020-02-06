@@ -29,8 +29,9 @@ const AccountsGrowth = props => {
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
+  display: flex;
 `;
 const Details = styled.div`
   display: flex;

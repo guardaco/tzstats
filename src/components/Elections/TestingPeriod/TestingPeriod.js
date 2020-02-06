@@ -2,16 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { Card, FlexRowSpaceBetween, FlexColumnSpaceAround, EmptyData } from '../../Common';
 import { getEndTime } from '../../../utils';
-import { proposals } from '../../../config/proposals';
+import { getProposalByHash } from '../../../config/proposals';
+
 
 const TestingPeriod = ({ period }) => {
   if (!period) {
     return (<EmptyWrapper><EmptyData title={'3 Testing period not started'}  mh={250}/></EmptyWrapper>);
   }
   const endTime = getEndTime(period);
-  const proposalDetails = proposals[period.proposals[0].hash]
-    ? proposals[period.proposals[0].hash]
-    : { name: '', link: '', archive: '' };
+  const proposalDetails = getProposalByHash(period.proposals[0].hash);
   return (
     <Wrapper>
       <Card title={`3 Testing period ${endTime}`} mh={250}>
@@ -35,14 +34,14 @@ const TestingPeriod = ({ period }) => {
 
 const Wrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
   font-size: 14px;
 `;
 
 const EmptyWrapper = styled.div`
   flex: 1;
-  min-width: 340px;
+  min-width: 300px;
   margin: 0 5px;
   font-size: 14px;
   opacity: 0.5;

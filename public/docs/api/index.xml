@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>TzStats API Reference</title>
+    <title>API Reference | TzStats</title>
     <link>https://tzstats.com/docs/api/</link>
-    <description>Recent content on TzStats API Reference</description>
+    <description>Recent content on API Reference | TzStats</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
@@ -17,7 +17,7 @@
       
       <guid>https://tzstats.com/docs/api/api/</guid>
       <description>Introduction  API Endpoints
- Mainnet: https://api.tzstats.com Zeronet: https://api.zeronet.tzstats.com Babylonnet: https://api.babylonnet.tzstats.com  TzStats provides a powerful API to access fully indexed raw data and statistics collected from the Tezos blockchain. You may use this API free of charge and without limits for non-commercial projects. To inquire about commerial use send an email to info@tzstats.com.
+ Mainnet: https://api.tzstats.com Zeronet: https://api.zeronet.tzstats.com Babylonnet: https://api.babylonnet.tzstats.com Carthagenet: https://api.carthagenet.tzstats.com Labnet: https://api.labnet.tzstats.com TzStats provides a powerful API to access fully indexed raw data and statistics collected from the Tezos blockchain. You may use this API free of charge and without limits for non-commercial projects. To inquire about commercial use send an email to info@tzstats.com.
 This API reference provides information on all public API endpoints and the different schemes of calling them.</description>
     </item>
     
@@ -39,7 +39,7 @@ Most explorer endpoints take different kinds of path arguments to define the obj
       
       <guid>https://tzstats.com/docs/api/tables/</guid>
       <description>Table Endpoints  Generic Table Query
- https://api.tzstats.com/tables/{table_code}.{format}?{args}  Tables store data in tabular form as a set of columns. Each column has a specified type and each row has a unique uint64 row_id. Empty values are represented as JSON null or empty strings. Tables can grow extremely large, so its good practice to use filters and the columns query argument to limit the result size. Table responses are automatically sorted by row_id.</description>
+ https://api.tzstats.com/tables/{table_code}.{format}?{args} Tables store data in tabular form as a set of columns. Each column has a specified type and each row has a unique uint64 row_id. Empty values are represented as JSON null or empty strings. Tables can grow extremely large, so its good practice to use filters and the columns query argument to limit the result size. Table responses are automatically sorted by row_id.</description>
     </item>
     
     <item>
@@ -49,7 +49,7 @@ Most explorer endpoints take different kinds of path arguments to define the obj
       
       <guid>https://tzstats.com/docs/api/timeseries/</guid>
       <description>Time-Series Endpoints  Generic Time-Series Query
- https://api.tzstats.com/series/{table_code}.{format}?{args}  The time-series API is an abstraction over tables which allows for server-side aggregation of multiple result rows over time. Time-series are meant to be displayed as graphs with time on the x-axis and some aggregate value on the y-axis. Since the underlying data is still in tabular form all table filters work on time-series as well.
+ https://api.tzstats.com/series/{table_code}.{format}?{args} The time-series API is an abstraction over tables which allows for server-side aggregation of multiple result rows over time. Time-series are meant to be displayed as graphs with time on the x-axis and some aggregate value on the y-axis. Since the underlying data is still in tabular form all table filters work on time-series as well.
 Note that this time-series API does not fill gaps.</description>
     </item>
     
@@ -59,8 +59,8 @@ Note that this time-series API does not fill gaps.</description>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://tzstats.com/docs/api/changelog/</guid>
-      <description> Changelog Recent changes and additions to the TzStats Data API.
-2019-10-20  changed some supply fields from mined_* to minted_* add new supply field minted_airdrop for invoices and protocol upgrade airdrops support Babylon airdrop of 1 mutez to manager accounts  </description>
+      <description>Changelog Recent changes and additions to the TzStats Data API.
+2020-01-06  UPGRADES  supports Carthage protocol PsCARTHAGazKbHtnKfLzQg3kms52kSRpgnDY982a9oYsSXRLQEb supports new Carthage reward constants for Emmy+ called baking_reward_per_endorsement and endorsement_reward in the Tezos RPC updated expected income based on new rewards formula   NEW EXPLORER FEATURES  /explorer/config/{height} now returns two additional float arrays block_rewards_v6 and endorsement_rewards_v6 containing the new Carthage reward constants; the previous fields block_reward and endorsement_reward remain unchanged and will contain the first elements from the corresponding v6 arrays add network health estimation based on recent 128 blocks (priority, endorsements, reorgs)   FIXES  block operation list paging with offset/limit now properly counts internal and batch operations voting period start and end heights are no longer off by 1 voting quorum, ema and eligible rolls calculations are corrected improved smart contract entrypoint detection so that annotated parent nodes in the parameter primitive tree are no longer shadowing valid entrypoints   DEPRECATION NOTICES  removed deprecated contract field ops and endpoint /explorer/contract/{addr}/op (use /explorer/account/{addr}/op endpoint instead) removed deprecated contract fields delegate, manager, script (use new endpoints or related account endpoints instead)    2019-12-05  FIXES  account is_revealed is now correctly reset when account balance becomes zero (in this case a Tezos node will remove all account data including a revealed pubkey from storage) eligible voting rolls are now taken after cycle start block is processed counting duplicate proposal votes has been corrected annualized supply calculation has been fixed to use 365 instead of 364 days fixed vote table period_start_height and period_end_height field names fixed empty fields in some CSV results numeric filters on tables now fully support range, in and not-in argument lists corrected income.</description>
     </item>
     
   </channel>

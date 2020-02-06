@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Colors from '../../Common/Colors';
-import { Devices } from '../../Common';
 import { Link } from 'react-router-dom';
 import { FlexRow } from '../../Common';
 
@@ -48,8 +47,6 @@ export default Footer;
 const Wrapper = styled.div`
   color: ${Colors.LIGHT_GRAY5};
   font-size: 11px;
-  position: absolute;
-  bottom: 0;
 `;
 
 const LinkedText = styled.span`

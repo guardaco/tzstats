@@ -44,25 +44,14 @@ const Searchbar = ({ history }) => {
     if (!type) { return; }
     saveSearch(value, type, key);
     reset();
-
     switch (type) {
-    case 'account':
-      history.push('/account/'+(key||value));
-      break;
-    case 'block':
-      history.push('/block/'+(key||value));
-      break;
-    case 'operation':
-      history.push('/operation/'+(key||value));
-      break;
-    case 'protocol':
-      history.push('/election/'+(key||value));
-      break;
     case 'cycle':
       history.push('/cycle/'+value);
       break;
-    default:
+    case null:
       return;
+    default:
+      history.push('/'+(key||value));
     }
   };
   const handleOnChange = value => {
@@ -154,7 +143,7 @@ const SearchContainer = styled.div`
   max-width: 900px;
   min-width: 900px;
   @media ${Devices.mobileL} {
-    min-width: 380px;
+    min-width: 300px;
   }
 `;
 const SearchWrapper = styled.div`

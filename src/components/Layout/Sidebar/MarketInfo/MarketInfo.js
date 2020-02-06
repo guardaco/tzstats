@@ -4,7 +4,7 @@ import { getMarketTickers } from '../../../../services/api/markets';
 import { useGlobal, setGlobal } from 'reactn';
 import { Card, Elevation } from '@blueprintjs/core';
 import { Link, withRouter } from 'react-router-dom';
-import { DataBox, FlexRow, FlexRowSpaceBetween, FlexColumn, LinkIcon } from '../../../Common';
+import { DataBox, Row, Column, RowSpace, LinkIcon } from '../../../Common';
 
 const MarketInfo = ({ history }) => {
   const [chain] = useGlobal('chain');
@@ -18,17 +18,18 @@ const MarketInfo = ({ history }) => {
         // filter fresh tickers in USD only (age < 2min)
         let usdtickers = tickers.filter(e => e.quote === 'USD' && now - e.timestamp < 2 * 60000);
         // price index: use all USD ticker last prices with equal weight
+        let vol = usdtickers.reduce((s, t) => s + t.volume_base, 0) || 1;
         setGlobal({
           tickers: tickers,
           lastMarketData: {
             date: usdtickers.length?usdtickers[0].timestamp:new Date(),
             price:
               usdtickers.reduce((s, t) => {
-                return s + t.last / usdtickers.length;
+                return s + t.last * t.volume_base / vol;
               }, 0) || 0,
             change:
               usdtickers.reduce((s, t) => {
-                return s + t.change / usdtickers.length;
+                return s + t.change * t.volume_base / vol;
               }, 0) || 0,
           },
         });
@@ -38,9 +39,7 @@ const MarketInfo = ({ history }) => {
   }, [chain]);
 
   const calculateMarketCap = () => {
-    return (
-      lastMarketData.price * (chain.supply.activated + chain.supply.mined + chain.supply.vested - chain.supply.burned)
-    );
+    return lastMarketData.price * chain.supply.circulating;
   };
 
   const getPriceIndicator = () => {
@@ -52,18 +51,18 @@ const MarketInfo = ({ history }) => {
       <Link to={"/market"}>
       <LinkIcon>&#x25E5;</LinkIcon>
       <Card interactive={true} elevation={Elevation.ZERO}>
-        <FlexRowSpaceBetween>
-          <FlexColumn>
-            <FlexRow>
+        <RowSpace>
+          <Column>
+            <Row>
               <div style={{ fontSize: 16 }}>${lastMarketData.price.toFixed(2)}</div>
               <PriceChanges style={{color:(lastMarketData.change < 0 ?'#FC6483':'#1af9ff')}}>
                 {getPriceIndicator()}
                 &nbsp;
                 {Math.abs(lastMarketData.change).toFixed(1)}%
               </PriceChanges>
-            </FlexRow>
+            </Row>
             <DataBox title="Tezos Price" />
-          </FlexColumn>
+          </Column>
           <DataBox
             valueSize="16px"
             title="Market Cap"
@@ -71,12 +70,13 @@ const MarketInfo = ({ history }) => {
             valueType="currency-usd"
             value={calculateMarketCap()}
           />
-        </FlexRowSpaceBetween>
+        </RowSpace>
       </Card>
       </Link>
     </Wrapper>
   );
 };
+
 
 const PriceChanges = styled.span`
   color: #1af9ff;
