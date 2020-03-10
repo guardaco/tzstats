@@ -17,8 +17,9 @@ import { formatValue, formatCurrency, getAccountTags, getAccountType } from '../
 
 const AccountInfo = ({ account }) => {
   const tags = getAccountTags(account);
-  const accountType = getAccountType(account);
-
+  const typ = getAccountType(account);
+  const isDelegator = typ.type === 'delegator';
+  const isBaker = typ.type === 'baker';
   const [chain] = useGlobal('chain');
   const [config] = useGlobal('config');
   const stakingCapacity = getStakingCapacity(account, chain, config);
@@ -30,13 +31,13 @@ const AccountInfo = ({ account }) => {
 
   return (
     <Wrapper>
-      <Card title={<><Blockies hash={account.address} /><span>{accountType.name}</span></>} tags={tags} right={<CopyHashButton value={account.address} />}>
+      <Card title={<><Blockies hash={account.address} /><span>{typ.name}</span></>} tags={tags} right={<CopyHashButton value={account.address} />}>
         <FlexRowSpaceBetween mt={10}>
           <FlexColumnSpaceBetween>
             <DataBox
               valueType="currency-full"
-              title="Total Balance"
-              value={account.total_balance + account.unclaimed_balance}
+              title="Full Balance"
+              value={account.spendable_balance + account.unclaimed_balance + account.frozen_deposits + account.frozen_rewards + account.frozen_fees}
             />
             <DataBox
               title="Last Active"
@@ -76,7 +77,7 @@ const AccountInfo = ({ account }) => {
             />
             <DataBox valueType="currency-full" title="Total Burned" value={account.total_burned} />
           </FlexColumnSpaceBetween>
-          {account.is_delegate ? (
+          {isBaker ? (
             <FlexColumnSpaceBetween width={200} paddingTop={10}>
               <FlexRowSpaceBetween marginRight={-10}>
                 <DataBox title="Active Delegations" value={account.active_delegations} />
@@ -86,12 +87,12 @@ const AccountInfo = ({ account }) => {
                 <FlexRowSpaceBetween>
                   <DataBox
                     valueType="currency"
-                    valueOpts={{ round: 1, digits: 0 }}
+                    valueOpts={{ round: 1, digits: 0, sym:'' }}
                     value={account.staking_balance}
                   />
                   <DataBox
                     valueType="currency"
-                    valueOpts={{ round: 1, digits: 0 }}
+                    valueOpts={{ round: 1, digits: 0, sym:'' }}
                     value={stakingCapacity}
                   />
                 </FlexRowSpaceBetween>
@@ -102,9 +103,9 @@ const AccountInfo = ({ account }) => {
                 </FlexRowSpaceBetween>
               </FlexColumn>
             </FlexColumnSpaceBetween>
-          ) : (account.is_delegated || account.is_contract) ? (
+          ) : (isDelegator || account.is_contract) ? (
             <FlexColumnSpaceBetween>
-              {account.delegate && !account.is_delegate ? (
+              {account.delegate && !isBaker ? (
                 <HashedBox hash={account.delegate} isCopy={false} typeName={`Current Delegate`} />
               ) : (
                 <DataBox title="Current Delegate" valueType="text" value="-"/>
@@ -157,7 +158,7 @@ function getStakingSettings(stakingBalance, stakingCapacity) {
     {
       percent: 100 - stakingPct,
       color: '#858999;',
-      title: `Remaining Capacity ${formatCurrency(stakingCapacity-stakingBalance, ',', 'tz')}`,
+      title: `Remaining Capacity ${formatCurrency(stakingCapacity-stakingBalance, ',', 'XTZ')}`,
       value: `${stakingCapacity}`,
     },
   ];

@@ -23,6 +23,7 @@ import {
   TableHeaderCell,
   TableRow,
   TableCell,
+  TableCellMinMax,
   TableDetails,
   TwoCardInline,
   Tabs,
@@ -30,6 +31,8 @@ import {
 } from './Box';
 import { LinkIcon } from './Controls';
 import { Value } from './DataBox';
+
+import { AlignedForm, Label, LabelDotLeft } from './Form';
 
 export { default as CurrencySelect } from './CurrencySelect';
 export { default as IntervalSelect } from './IntervalSelect';
@@ -73,6 +76,7 @@ export {
   TableHeaderCell,
   TableRow,
   TableCell,
+  TableCellMinMax,
   TableDetails,
   Value,
   TwoCardInline,
@@ -80,6 +84,9 @@ export {
   Sizes,
   Tabs,
   Tab,
+  AlignedForm,
+  Label,
+  LabelDotLeft
 };
 
 //Todo replace it

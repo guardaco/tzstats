@@ -75,12 +75,12 @@ const TxTable = ({ data, account, incoming }) => {
     <>
       <TableHeader>
         <TableHeaderCell width={5}>No</TableHeaderCell>
-        <TableHeaderCell width={20}>{incoming?'Sender':'Receiver'}</TableHeaderCell>
-        <TableHeaderCell width={12}>Amount</TableHeaderCell>
-        {!incoming?<TableHeaderCell width={15}>Fee / Burn</TableHeaderCell>:''}
+        <TableHeaderCell width={18}>{incoming?'Sender':'Receiver'}</TableHeaderCell>
+        <TableHeaderCell width={15}>Amount</TableHeaderCell>
+        {!incoming?<TableHeaderCell width={20}>Fee / Burn</TableHeaderCell>:''}
         <TableHeaderCell width={20}>Date</TableHeaderCell>
-        <TableHeaderCell width={10}>Block</TableHeaderCell>
-        <TableHeaderCell width={10}>Hash</TableHeaderCell>
+        <TableHeaderCell width={8}>Block</TableHeaderCell>
+        <TableHeaderCell width={15}>Hash</TableHeaderCell>
       </TableHeader>
       <TableBody id={data.id}>
         {data.isLoaded ? (
@@ -90,30 +90,30 @@ const TxTable = ({ data, account, incoming }) => {
                 <TableRow key={i} color={item.is_success?'inherit':'#ED6290'}>
                   <TableCell width={5}><TableDetails>{i+1}</TableDetails></TableCell>
                   { incoming ? (
-                    <TableCell width={20}>
+                    <TableCell width={18}>
                       <Blockies hash={item.sender} />
                       <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.sender}`}>{getShortHashOrBakerName(item.sender)}</Link>
                     </TableCell>
                     ) : (
-                    <TableCell width={20}>
-                      <Blockies hash={item.receiver||item.delegate} />
+                    <TableCell width={18}>
+                      <Blockies hash={item.receiver} />
                       <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.receiver}`}>{getShortHashOrBakerName(item.receiver)}</Link>
                     </TableCell>
                   )}
-                  <TableCell width={12}><Value value={item.volume} type="currency" digits={0} zero="-"/></TableCell>
+                  <TableCell width={15}><Value value={item.volume} type="currency" digits={0} zero="-"/></TableCell>
                   { !incoming ? (
-                    <TableCell width={15}>
-                      <Value value={item.fee} type="currency" digits={0} zero="-"/>
+                    <TableCell width={20}>
+                      <Value value={item.fee>0?item.fee:0} type="currency" digits={0} zero="-"/>
                       &nbsp;/&nbsp;
                       <Value value={item.burned} type="currency" digits={0} zero="-"/>
                     </TableCell>
                     ) : ''
                   }
                   <TableCell width={20}><Value value={item.time} type="datetime"/></TableCell>
-                  <TableCell width={10}>
+                  <TableCell width={8}>
                     <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.height}`}>{formatValue(item.height)}</Link>
                   </TableCell>
-                  <TableCell width={10}>
+                  <TableCell width={15}>
                     <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.hash}`}>{getShortHashOrBakerName(item.hash)}</Link>
                   </TableCell>
                 </TableRow>
@@ -134,14 +134,13 @@ const OtherTable = ({ data, account }) => {
   return (
     <>
       <TableHeader>
-        <TableHeaderCell width={5}>No</TableHeaderCell>
-        <TableHeaderCell width={13}>Type</TableHeaderCell>
-        <TableHeaderCell width={18}>Receiver</TableHeaderCell>
-        <TableHeaderCell width={10}>Amount</TableHeaderCell>
-        <TableHeaderCell width={15}>Fee / Burn</TableHeaderCell>
-        <TableHeaderCell width={19}>Date</TableHeaderCell>
+        <TableHeaderCell width={3}>No</TableHeaderCell>
+        <TableHeaderCell width={5}>Type</TableHeaderCell>
+        <TableHeaderCell width={20}>Receiver</TableHeaderCell>
+        <TableHeaderCell width={22}>Fee / Burn</TableHeaderCell>
+        <TableHeaderCell width={20}>Date</TableHeaderCell>
         <TableHeaderCell width={10}>Block</TableHeaderCell>
-        <TableHeaderCell width={10}>Hash</TableHeaderCell>
+        <TableHeaderCell width={20}>Hash</TableHeaderCell>
       </TableHeader>
       <TableBody id={data.id}>
         {data.isLoaded ? (
@@ -149,30 +148,28 @@ const OtherTable = ({ data, account }) => {
             data.table.map((item, i) => {
               return (
                 <TableRow key={i} color={item.is_success?'inherit':'#ED6290'}>
-                  <TableCell width={5}><TableDetails>{i+1}</TableDetails></TableCell>
-                  <TableCell width={13}>
+                  <TableCell width={3}><TableDetails>{i+1}</TableDetails></TableCell>
+                  <TableCell width={5} title={(item.is_success?'':'Failed ')+opNames[item.type]}>
                     <TxTypeIcon isSuccess={item.is_success} type={item.type} />
-                    <TableDetails>{`${opNames[item.type]}`}</TableDetails>
                   </TableCell>
-                  {item.receiver||item.delegate ? (
-                    <TableCell width={18}>
-                      <Blockies hash={item.receiver||item.delegate} />
-                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.receiver||item.delegate}`}>{getShortHashOrBakerName(item.receiver||item.delegate)}</Link>
+                  {item.delegate||item.receiver ? (
+                    <TableCell width={20}>
+                      <Blockies hash={item.delegate||item.receiver} />
+                      <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.delegate||item.receiver}`}>{getShortHashOrBakerName(item.delegate||item.receiver)}</Link>
                     </TableCell>
                   ) : (
-                    <TableCell width={18}>-</TableCell>
+                    <TableCell width={20}>-</TableCell>
                   )}
-                  <TableCell width={10}><Value value={item.volume||item.reward} type="currency" digits={0} zero="-"/></TableCell>
-                  <TableCell width={15}>
-                    <Value value={item.fee} type="currency" digits={0} zero="-"/>
+                  <TableCell width={22}>
+                    <Value value={item.fee>0?item.fee:0} type="currency" digits={0} zero="-"/>
                     &nbsp;/&nbsp;
                     <Value value={item.burned} type="currency" digits={0} zero="-"/>
                   </TableCell>
-                  <TableCell width={19}><Value value={item.time} type="datetime"/></TableCell>
+                  <TableCell width={20}><Value value={item.time} type="datetime"/></TableCell>
                   <TableCell width={10}>
                     <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.height}`}>{formatValue(item.height)}</Link>
                   </TableCell>
-                  <TableCell width={10}>
+                  <TableCell width={20}>
                     <Link style={{color:item.is_success?'inherit':'#ED6290'}} to={`/${item.hash}`}>{getShortHashOrBakerName(item.hash)}</Link>
                   </TableCell>
                 </TableRow>
