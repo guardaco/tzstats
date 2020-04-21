@@ -11,7 +11,6 @@ import {
 } from '../../Common';
 
 const TzbtcInfo = ({ token }) => {
-
   return (
     <Card title={'Token Details'}>
       <FlexRowSpaceBetween mt={10}>
@@ -19,7 +18,7 @@ const TzbtcInfo = ({ token }) => {
           <DataBox
             valueType="currency-full"
             title="Total Supply"
-            value={parseInt(token.config.totalSupply)}
+            value={token.totalSupply}
             valueOpts={{sym:token.code}}
           />
           <DataBox
@@ -29,7 +28,7 @@ const TzbtcInfo = ({ token }) => {
           />
         </FlexColumnSpaceBetween>
         <FlexColumnSpaceBetween>
-          <HashedBox hash={token.config.admin} isCopy={false} typeName={`Admin`} />
+          <HashedBox hash={token.config.admin||token.config.owner} isCopy={false} typeName={`Owner`} />
           <HashedBox hash={token.config.redeemAddress} isCopy={false} typeName={`Redeem Address`} />
         </FlexColumnSpaceBetween>
       </FlexRowSpaceBetween>

@@ -5,7 +5,6 @@ import { useGlobal } from 'reactn';
 
 const StakingInfo = () => {
   const [chain] = useGlobal('chain');
-
   return (
     <Wrapper>
       <Card title={`Staking Activity`} mh={112}>
@@ -21,7 +20,7 @@ const StakingInfo = () => {
             title="Rewards"
             valueType="text"
             valueSize="14px"
-            value={`${(chain.inflation_rate_1y / (chain.supply.active_staking / chain.supply.total)).toFixed(2)}%`}
+            value={`${(chain.inflation_1y / chain.supply.active_staking * 100).toFixed(2)}%`}
           />
           <DataBox
             title="Inflation"

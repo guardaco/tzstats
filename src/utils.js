@@ -2,7 +2,7 @@ import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
-import { bakerAccounts } from './config/baker-accounts';
+import { getAliases } from './config/aliases';
 import { proposals } from './config/proposals';
 import _ from 'lodash';
 
@@ -199,7 +199,7 @@ export function getShortHashOrBakerName(hash) {
   if (!hash) {
     return '-';
   }
-  const baker = bakerAccounts[hash];
+  const baker = getAliases()[hash];
   return baker ? baker.name : getShortHash(hash, 8, 6);
 }
 
@@ -210,12 +210,12 @@ export function getHashOrBakerName(hash) {
   if (!hash) {
     return '-';
   }
-  const baker = bakerAccounts[hash];
+  const baker = getAliases()[hash];
   return baker ? baker.name : hash;
 }
 
 export function getBakerName(hash) {
-  const baker = bakerAccounts[hash];
+  const baker = getAliases()[hash];
   return baker ? baker.name : null;
 }
 
@@ -307,7 +307,7 @@ export function getAccountTags(account) {
       tags.push('Activated');
     }
   }
-  if (!account.is_active_delegate && account.is_delegate && !account.is_delegated) {
+  if (!account.is_active_delegate && account.is_delegate) {
     tags.push('Inactive');
   }
   return tags;
@@ -355,8 +355,9 @@ export function getEndTime(period, field, noDetail) {
 
 export function getBakerHashByName(value) {
   value = value.toLowerCase();
-  const baker = Object.keys(bakerAccounts).filter(key => {
-    return bakerAccounts[key].name.toLowerCase().includes(value);
+  const aliases = getAliases();
+  const baker = Object.keys(aliases).filter(key => {
+    return aliases[key].name.toLowerCase().includes(value);
   });
   return baker[0] || null;
 }
@@ -373,12 +374,13 @@ export function makeid(length) {
 
 export function searchBakers(value) {
   let lvalue = value.toLowerCase();
-  return Object.keys(bakerAccounts)
+  const aliases = getAliases();
+  return Object.keys(aliases)
     .filter(key => {
-      return key.includes(value) || bakerAccounts[key].name.toLowerCase().includes(lvalue);
+      return key.includes(value) || aliases[key].name.toLowerCase().includes(lvalue);
     })
     .reduce((acc, key) => {
-      let c = bakerAccounts[key];
+      let c = aliases[key];
       c.key = key;
       acc.push(c);
       return acc;
@@ -471,7 +473,7 @@ export const isObject = val => typeof val === 'object' && val !== null && !isArr
 export const isBool = val => typeof val === "boolean";
 export const isNumber = val => !isNaN(parseFloat(val)) && !isNaN(val - 0);
 export const isDefined = val => typeof val !== 'undefined';
-export const isUndefined = val => typeof x === 'undefined';
+export const isUndefined = val => typeof val === 'undefined';
 export const isAddress = val => isString(val) && val.length === 36;
 export const isCode = val => isArray(val) && val.length && isDefined(val[0].prim);
 
